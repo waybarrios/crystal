@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CRYSTAL: Transparent Multimodal Reasoning Evaluation</title>
+<meta name="description" content="CRYSTAL: a diagnostic benchmark (6,372 instances) that scores how multimodal LLMs reason via verifiable intermediate steps (Match F1 and Ordered Match F1), not just final answers. ECCV 2026." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="CRYSTAL: Beyond Final Answers, Transparent Multimodal Reasoning Evaluation" />
+<meta property="og:description" content="A benchmark that grades reasoning step by step, exposing lucky guesses, cherry-picking, and disordered logic that final-answer accuracy hides. ECCV 2026." />
+<meta property="og:image" content="static/images/teaser_sample0.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='.5' stop-color='%232563eb'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='16,2 29,12 16,30 3,12' fill='url(%23g)'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="static/css/style.css" />
+</head>
+<body>
+
+<!-- ░░░ NAV ░░░ -->
+<header class="nav" id="top">
+  <a class="nav__brand" href="#top" aria-label="CRYSTAL home">
+    <span class="brand__mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="24" height="24">
+        <defs>
+          <linearGradient id="navGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5eead4"/><stop offset=".45" stop-color="#22d3ee"/><stop offset="1" stop-color="#2563eb"/>
+          </linearGradient>
+          <linearGradient id="navGrad2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#7c3aed"/>
+          </linearGradient>
+        </defs>
+        <polygon points="16,2 29,12 16,30 3,12" fill="url(#navGrad2)"/>
+        <polygon points="16,2 29,12 16,14 3,12" fill="url(#navGrad)"/>
+        <polygon points="3,12 16,14 16,30" fill="#0b1221" opacity=".15"/>
+        <polygon points="16,2 16,14 3,12" fill="#ffffff" opacity=".18"/>
+        <g stroke="#ffffff" stroke-opacity=".6" stroke-width=".9" fill="none" stroke-linejoin="round">
+          <path d="M3,12 L16,14 L29,12"/><path d="M16,2 L16,30"/>
+        </g>
+      </svg>
+    </span>
+    <span class="brand__word">CRYSTAL</span>
+  </a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#abstract">Abstract</a>
+    <a href="#problem">Problem</a>
+    <a href="#benchmark">Benchmark</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#results">Results</a>
+    <a href="#training">Training</a>
+    <a href="#cite">Cite</a>
+  </nav>
+  <a class="nav__venue" href="https://eccv.ecva.net/" target="_blank" rel="noopener">
+    <img class="nav__logo" src="static/images/eccv2026_logo.svg" alt="ECCV" /> 2026
+  </a>
+</header>
+
+<main>
+
+<!-- ░░░ HERO ░░░ -->
+<section class="hero">
+  <img class="hero__logo" src="static/images/eccv2026_logo.svg" alt="European Conference on Computer Vision (ECCV) 2026" />
+  <p class="eyebrow">ECCV 2026 · Multimodal Reasoning Evaluation</p>
+
+  <h1 class="title">Beyond Final Answers: <span class="title__brand">CRYSTAL</span></h1>
+  <p class="acronym">Clear Reasoning via Yielded Steps, Traceability &amp; Logic</p>
+  <p class="subtitle">
+    A diagnostic benchmark that scores multimodal reasoning step by step, exposing the
+    lucky guesses, cherry-picking, and disordered logic that final-answer accuracy hides.
+  </p>
+
+  <ul class="authors" aria-label="Authors">
+    <li><a href="https://waybarrios.com" target="_blank" rel="noopener">Wayner Barrios</a><sup>1</sup></li>
+    <li><a href="https://souyoungjin.github.io/" target="_blank" rel="noopener">SouYoung Jin</a><sup>1</sup></li>
+  </ul>
+  <p class="affil"><span><sup>1</sup> Dartmouth College</span></p>
+
+  <div class="institutions" aria-label="Affiliated institutions">
+    <a class="inst inst--dart" href="https://home.dartmouth.edu/" target="_blank" rel="noopener" title="Dartmouth College">
+      <img class="inst__pine" src="static/images/dartmouth_pine.png" alt="" aria-hidden="true" />
+      <img class="inst__word" src="static/images/dartmouth_word.png" alt="Dartmouth College" />
+    </a>
+  </div>
+
+  <div class="cta">
+    <a class="btn" href="https://arxiv.org/abs/2603.13099" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 12h8M8 16h5"/></svg>
+      arXiv
+    </a>
+    <a class="btn" href="https://github.com/waybarrios/crystal" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      Code
+    </a>
+    <a class="btn" href="https://huggingface.co/datasets/waybarrios/CRYSTAL" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M3 8l9-5 9 5-9 5-9-5z"/></svg>
+      Dataset
+    </a>
+    <a class="btn" href="#cite">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+      BibTeX
+    </a>
+  </div>
+
+  <!-- Hero signature: the refractor, real exercises refracting into graded steps -->
+  <figure class="refractor" id="refractor" aria-label="Real benchmark exercises refracting into graded reasoning steps">
+    <figcaption class="refractor__head">
+      <span class="refractor__tag">CRYSTAL · step-level evaluation</span>
+      <span class="refractor__eq" id="rxScore">answer → reasoning steps → Match F1</span>
+    </figcaption>
+    <div class="rx" id="rx">
+      <svg class="rx__rays" id="rxRays" aria-hidden="true"></svg>
+      <div class="rx__q">
+        <div class="rx__imgwrap" id="rxImgwrap">
+          <img class="rx__img" id="rxImg" alt="" />
+          <span class="rx__src" id="rxSrc"></span>
+        </div>
+        <p class="rx__qtext" id="rxQ"></p>
+        <p class="rx__gt">Ground truth · <b id="rxGT"></b></p>
+      </div>
+      <div class="rx__prism">
+        <svg id="rxCrystal" class="rx__crystal" width="58" height="58" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="rxGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5eead4"/><stop offset=".45" stop-color="#22d3ee"/><stop offset="1" stop-color="#2563eb"/>
+            </linearGradient>
+            <linearGradient id="rxGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+          <!-- faceted crystal: crown (lighter) + pavilion (deeper), girdle + facet lines -->
+          <polygon points="32,4 58,25 32,60 6,25" fill="url(#rxGrad2)"/>
+          <polygon points="32,4 58,25 32,28 6,25" fill="url(#rxGrad)"/>
+          <polygon points="6,25 32,28 32,60" fill="#0b1221" opacity=".14"/>
+          <polygon points="32,4 32,28 6,25" fill="#ffffff" opacity=".16"/>
+          <g stroke="#ffffff" stroke-opacity=".55" stroke-width="1" fill="none" stroke-linejoin="round">
+            <path d="M6,25 L32,28 L58,25"/>
+            <path d="M32,4 L32,60"/>
+          </g>
+        </svg>
+      </div>
+      <div class="rx__steps" id="rxSteps"></div>
+    </div>
+    <div class="rx__dots" id="rxDots" role="tablist" aria-label="Benchmark examples"></div>
+  </figure>
+
+  <p class="teaser-cap">
+    A crystal refracts a beam into its colors. <strong>CRYSTAL refracts a final answer
+    into its reasoning steps</strong>, then checks each one, so a right answer built on
+    wrong reasoning no longer scores a perfect grade.
+  </p>
+</section>
+
+<!-- ░░░ ABSTRACT ░░░ -->
+<section class="section" id="abstract">
+  <span class="section__eyebrow">Abstract</span>
+  <h2 class="section__title">Grading how models reason, not just what they answer</h2>
+  <div class="prose reveal">
+    <p>
+      Modern multimodal large language models reach impressive scores on vision-language
+      benchmarks, yet those benchmarks judge only <strong>final answers</strong>, making
+      shortcuts indistinguishable from genuine understanding.
+    </p>
+    <p>
+      We introduce <strong>CRYSTAL</strong> (Clear Reasoning via Yielded Steps, Traceability
+      and Logic), a diagnostic benchmark of <strong>6,372 instances</strong> that evaluates
+      multimodal reasoning through verifiable intermediate steps. Two complementary metrics
+      grade the chain: <strong>Match F1</strong>, which scores step-level precision and recall
+      via semantic similarity matching, and <strong>Ordered Match F1</strong>, which further
+      penalizes disordered reasoning. References are built through a Delphi-inspired pipeline
+      where four independent MLLMs generate trajectories, aggregated by semantic clustering and
+      validated through human quality gates.
+    </p>
+    <p>
+      Evaluating <strong>20 MLLMs</strong> (including commercial frontier systems never used
+      during construction) reveals failures invisible to accuracy: universal cherry-picking
+      (precision far exceeds recall), non-monotonic scaling trade-offs, and disordered reasoning
+      where no competitive model keeps more than 60% of its matched steps in order. Beyond
+      evaluation, our <strong>Causal Process Reward (CPR)</strong> couples answer correctness
+      with step alignment, lifting Match F1 by <strong>+32%</strong> via GRPO where additive
+      rewards fail.
+    </p>
+  </div>
+
+  <ul class="keystats reveal" aria-label="Key figures">
+    <li><span class="keystats__n" data-count="6372">6,372</span> instances</li>
+    <li><span class="keystats__n" data-count="20">20</span> MLLMs evaluated</li>
+    <li><span class="keystats__n">2</span> step-level metrics</li>
+    <li><span class="keystats__n">+32%</span> Match F1 via CPR</li>
+  </ul>
+</section>
+
+<!-- ░░░ PROBLEM ░░░ -->
+<section class="section section--alt" id="problem">
+  <span class="section__eyebrow">The Problem</span>
+  <h2 class="section__title">Right answer, wrong reasoning</h2>
+  <p class="section__dek reveal">
+    Vision-language benchmarks judge models by their final answers alone, never inspecting the
+    steps in between, so a model can produce a self-contradictory chain and still earn full
+    credit whenever its answer happens to land. <em>Here is a real one.</em>
+  </p>
+
+  <div class="problem reveal">
+    <figure class="problem__img">
+      <img src="static/images/teaser_sample0.jpg" alt="Three Xbox consoles on a desk. A RealWorldQA question asks which is the smallest." />
+      <figcaption>RealWorldQA · “Which of the 3 objects is the smallest?” &nbsp;Ground truth: C (middle)</figcaption>
+    </figure>
+
+    <div class="verdict">
+      <div class="vcard vcard--old">
+        <span class="vcard__lab">Previous benchmarks · answer-only</span>
+        <ul class="steplist">
+          <li><span class="ic ic--ok">✓</span> Model answers <strong>C</strong> (correct)</li>
+        </ul>
+        <div class="vscore">
+          <span>Accuracy <b class="good">100%</b></span>
+          <span style="color:var(--faint)">reasoning invisible</span>
+        </div>
+      </div>
+
+      <div class="vcard vcard--new">
+        <span class="vcard__lab">CRYSTAL · answer + step-level</span>
+        <ul class="steplist">
+          <li><span class="ic ic--ok">✓</span> Three gaming consoles on a desk</li>
+          <li><span class="ic ic--no">✗</span> The middle console is <span class="bad">larger</span> than the others</li>
+          <li><span class="ic ic--no">✗</span> It is the most powerful based on size</li>
+          <li><span class="ic ic--ok">✓</span> Final answer: C</li>
+        </ul>
+        <div class="vscore">
+          <span>Match F1 <b class="bad">0.15</b></span>
+          <span>Accuracy <b class="good">100%</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░░ BENCHMARK / PIPELINE ░░░ -->
+<section class="section" id="benchmark">
+  <span class="section__eyebrow">The Benchmark</span>
+  <h2 class="section__title">A Delphi-inspired reference pipeline</h2>
+  <p class="section__dek reveal">
+    CRYSTAL pairs 6,372 multimodal questions with verified step-by-step reasoning chains,
+    built by a four-phase pipeline that aggregates four independent MLLMs through semantic
+    clustering and filters them with automated and human quality gates.
+  </p>
+
+  <div class="pipeline reveal">
+    <article class="pstep">
+      <div class="pstep__n">1</div>
+      <h3>Independent generation</h3>
+      <p>Four open-source MLLMs from different families each generate candidate reasoning steps from the question, image, and correct answer. Distinct seeds reduce correlated errors.</p>
+    </article>
+    <article class="pstep">
+      <div class="pstep__n">2</div>
+      <h3>Semantic clustering</h3>
+      <p>Candidate steps are embedded, linked into a similarity graph, grouped into paraphrastic clusters, and the representative step of each is ordered into one coherent chain.</p>
+    </article>
+    <article class="pstep">
+      <div class="pstep__n">3</div>
+      <h3>Automated validation</h3>
+      <p>A held-out fifth MLLM checks each chain for logical soundness, coherence, visual grounding, and answer consistency; failures loop back for regeneration.</p>
+    </article>
+    <article class="pstep">
+      <div class="pstep__n">4</div>
+      <h3>Human quality gate</h3>
+      <p>A trained annotator verifies claims are visible, transitions are sound, and the steps yield the answer. Fewer than 5% of examples need re-iteration.</p>
+    </article>
+  </div>
+
+  <div class="srcbar reveal" id="srcbar" aria-label="Source dataset composition" style="margin-top:clamp(34px,5vw,52px)"></div>
+  <div class="srclegend reveal" id="srclegend" aria-hidden="true"></div>
+</section>
+
+<!-- ░░░ METRICS ░░░ -->
+<section class="section section--alt" id="metrics">
+  <span class="section__eyebrow">The Metrics</span>
+  <h2 class="section__title">Two scores that grade the chain</h2>
+  <p class="section__dek reveal">
+    <strong>Match F1</strong> measures how well predicted steps semantically align with the
+    references; <strong>Ordered Match F1</strong> additionally penalizes steps that arrive in
+    the wrong logical order.
+  </p>
+
+  <div class="metricdefs reveal">
+    <div class="mdef">
+      <span class="mdef__lab">Match F1</span>
+      <div class="eq" data-tex="\mathrm{Match\text{-}F1} = \frac{1}{N}\sum_{i=1}^{N} \frac{2\,\mathrm{Prec}_i\,\mathrm{Rec}_i}{\mathrm{Prec}_i + \mathrm{Rec}_i}"></div>
+      <p>Each predicted step is matched to a reference step by cosine similarity in the
+        <code>all-distilroberta-v1</code> space; pairs at or above <code>τ = 0.35</code> are
+        matched greedily. <strong>Precision</strong> = matched / predicted steps;
+        <strong>recall</strong> = matched / reference steps.</p>
+    </div>
+    <div class="mdef">
+      <span class="mdef__lab">Ordered Match F1</span>
+      <div class="eq" data-tex="\text{Ord\text{-}F1}_i = \text{F1}_i \cdot \bigl((1-\alpha) + \alpha\cdot\text{LIS}_i\bigr),\quad \alpha = 0.3"></div>
+      <p>Sort the matched steps by their <em>reference</em> position; the Longest Increasing
+        Subsequence (<code>LIS</code>) ratio then counts what fraction stay in that order in the
+        model's output, scaling Match F1 down when reasoning arrives out of sequence.
+        <code>α = 0</code> recovers Match F1.</p>
+    </div>
+  </div>
+
+  <!-- interactive step-matching demo -->
+  <figure class="matchdemo reveal" id="matchdemo" aria-label="Interactive step-matching demonstration">
+    <div class="matchdemo__head">
+      <span class="matchdemo__q">Worked example · <b>“Which of the 3 consoles is the smallest?”</b></span>
+      <span class="matchdemo__ctrls">
+        <button class="dbtn" id="demoOrder" aria-pressed="false">Ordered</button>
+        <button class="dbtn" id="demoReplay">▶ Replay</button>
+      </span>
+    </div>
+    <div class="matchgrid">
+      <div class="matchcol" id="refCol">
+        <span class="matchcol__lab">Reference steps</span>
+      </div>
+      <div class="matchcanvas" id="matchCanvas"><svg id="matchSvg" aria-hidden="true"></svg></div>
+      <div class="matchcol" id="predCol">
+        <span class="matchcol__lab">Model's predicted steps</span>
+      </div>
+    </div>
+    <div class="readout" id="readout">
+      <div class="rstat"><span class="rstat__n" id="roP">0.00</span><span class="rstat__l">Precision</span></div>
+      <div class="rstat"><span class="rstat__n" id="roR">0.00</span><span class="rstat__l">Recall</span></div>
+      <div class="rstat rstat--f1"><span class="rstat__n" id="roF1">0.00</span><span class="rstat__l">Match F1</span></div>
+      <div class="rstat"><span class="rstat__n" id="roOrd">0.00</span><span class="rstat__l">Ordered F1</span></div>
+    </div>
+    <p class="matchdemo__note" id="demoNote"></p>
+  </figure>
+
+  <p class="section__dek reveal" style="margin-top:clamp(40px,6vw,60px);margin-bottom:24px">
+    The matching is robust by design: the encoder is threshold-invariant, and the order metric
+    discriminates trivially-ordered short outputs.
+  </p>
+  <div class="metricfigs reveal">
+    <figure class="gcard">
+      <img src="static/images/ablation_encoders_3subplots.png" alt="Encoder and threshold ablation for step matching, across Match F1, precision, and recall." />
+      <figcaption>Across five encoders and thresholds τ ∈ [0.30, 0.50], <code>all-distilroberta-v1</code> (red) stays flat and <strong>threshold-invariant</strong>, so Match F1 does not hinge on a hand-tuned cutoff. Default τ = 0.35.</figcaption>
+    </figure>
+    <figure class="gcard gcard--narrow">
+      <img src="static/images/order_metric_ablation.png" alt="Order metric comparison: Kendall's Tau versus the LIS ratio across models." />
+      <figcaption>Why <strong>LIS</strong> for the order penalty: it gives wider discrimination across model groups than Kendall's Tau, more clearly exposing trivially-ordered, few-step outputs.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ░░░ RESULTS ░░░ -->
+<section class="section" id="results">
+  <span class="section__eyebrow">Results</span>
+  <h2 class="section__title">20 models, three persistent failures</h2>
+  <p class="section__dek reveal">
+    We evaluate 20 multimodal models (16 open-source and 4 commercial) on step-level reasoning.
+    The results expose confident step omission (<em>cherry-picking</em>), accuracy and reasoning
+    quality pulling apart with scale, and steps that are individually right but globally
+    out of order.
+  </p>
+
+  <div class="headline reveal" id="headline"></div>
+
+  <div class="reveal">
+    <div class="tabs" role="tablist" aria-label="Model groups">
+      <button class="tab is-active" role="tab" aria-selected="true" data-tab="all">All</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="commercial">Commercial</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="open">Open-source</button>
+    </div>
+    <div class="tablewrap" id="tablewrap"></div>
+    <p class="results__foot">
+      Match F1 / P / R / Ord. F1 use <code>all-distilroberta-v1</code>, τ = 0.35.
+      <span><span class="rank" style="background:var(--match)"></span>1st</span>
+      <span><span class="rank" style="background:var(--facet)"></span>2nd</span>
+      <span><span class="rank" style="background:var(--amber)"></span>3rd</span>
+      per column.
+    </p>
+  </div>
+
+  <div class="cherry reveal">
+    <h3 class="cherry__title">Universal cherry-picking: precision ≫ recall</h3>
+    <p class="section__dek" style="margin-bottom:8px">
+      19 of 20 models report precise steps but skip large portions of the reasoning chain.
+      Even GPT-5, the top model by accuracy, recovers only 47.9% of the reference steps.
+      Gemini 2.5 Flash is the lone exception (it over-explains).
+    </p>
+    <div class="cherrybars" id="cherrybars"></div>
+    <div class="cherrylegend">
+      <span><i style="background:color-mix(in srgb,var(--facet) 80%, #fff)"></i>Precision</span>
+      <span><i style="background:color-mix(in srgb,var(--amber) 78%, #fff)"></i>Recall</span>
+    </div>
+  </div>
+</section>
+
+<!-- ░░░ TRAINING / GRPO ░░░ -->
+<section class="section section--alt" id="training">
+  <span class="section__eyebrow">Beyond Evaluation</span>
+  <h2 class="section__title">CPR: a reward that improves both at once</h2>
+  <p class="section__dek reveal">
+    CRYSTAL is not only an evaluation benchmark. Its step-level references are a training signal.
+    With the Causal Process Reward, GRPO improves answer accuracy <em>and</em> reasoning quality
+    together, where conventional additive rewards fail.
+  </p>
+
+  <div class="grpo reveal">
+    <div class="eqcard" style="margin-bottom:0">
+      <span class="eqcard__lab">Causal Process Reward</span>
+      <div class="eq" data-tex="R_{\text{CPR}} = \begin{cases} a_w + s_w \cdot \text{F1}_{\text{step}} & \text{answer correct} \\ s_w \cdot \text{F1}_{\text{step}} \cdot \lambda & \text{otherwise} \end{cases},\ \ \lambda = 0.3"></div>
+      <p>Additive rewards let a model earn credit by <em>guessing</em> while reasoning stays
+        flat. CPR multiplies the step reward into the correctness condition, so neither objective
+        can be maximized alone, forcing a correct answer <strong>and</strong> faithful,
+        well-covered reasoning.</p>
+    </div>
+    <div>
+      <h3 style="font-family:var(--display);font-weight:600;font-size:20px;margin:0 0 10px;letter-spacing:-.01em">CPR-Curriculum</h3>
+      <p style="font-size:15px;color:var(--muted);line-height:1.6;margin:0 0 14px">
+        A two-phase schedule: warm up on format + accuracy, then add the full CPR reward while
+        introducing harder examples from short to long multi-hop chains, building reasoning
+        coverage on a stable accuracy foundation.
+      </p>
+      <p style="font-size:15px;color:var(--ink-soft);line-height:1.6;margin:0">
+        The payoff: GRPO that raises <strong>both</strong> answer accuracy and step-level
+        reasoning quality at once. This is the failure mode that sank earlier additive rewards.
+      </p>
+    </div>
+  </div>
+
+  <figure class="grpo__fig reveal" style="margin:clamp(34px,5vw,52px) auto 0">
+    <img src="static/images/grpo_trajectories.png" alt="Training dynamics: Match-F1 and accuracy trajectories for four GRPO reward strategies over training steps." />
+    <figcaption><strong>Training dynamics</strong> on Qwen2.5-VL-3B. <em>Left:</em> Match F1. <em>Composite</em> oscillates, <em>Answer-Only</em> stays flat, and the <strong>CPR</strong> variants improve monotonically. <em>Right:</em> Accuracy. Composite collapses at step 600; both additive rewards diverged to NaN gradients and were halted at step 1,500, while CPR variants train stably through 2,800 steps.</figcaption>
+  </figure>
+
+  <h3 class="cherry__title reveal" style="margin-top:clamp(44px,6vw,68px)">CPR-Curriculum generalizes across architectures</h3>
+  <p class="section__dek reveal" style="margin-bottom:24px">
+    The same two-phase protocol lifts both accuracy and Match F1 on two different base models,
+    with no architecture-specific tuning. On InternVL3.5-4B, recall nearly triples (0.325 → 0.811).
+  </p>
+  <div class="grpotable reveal" id="grpotable"></div>
+  <p class="results__foot reveal">All metrics use <code>all-distilroberta-v1</code>, τ = 0.35.</p>
+</section>
+
+<!-- ░░░ EXAMPLES ░░░ -->
+<section class="section" id="examples">
+  <span class="section__eyebrow">Qualitative Examples</span>
+  <h2 class="section__title">Reasoning chains across the benchmark</h2>
+  <p class="section__dek reveal">
+    Every instance ships with verified reference steps spanning math, science, charts, and
+    real-world perception, from 3 to 42 steps per question.
+  </p>
+  <div class="exgrid reveal" id="gallery"></div>
+</section>
+
+<!-- ░░░ CITE ░░░ -->
+<section class="section section--alt" id="cite">
+  <span class="section__eyebrow">Citation</span>
+  <h2 class="section__title">BibTeX</h2>
+  <div class="cite reveal">
+    <button class="cite__copy" id="copyBib" aria-label="Copy BibTeX">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span>Copy</span>
+    </button>
+<pre id="bibtex"><code>@inproceedings{barrios2026crystal,
+  title     = {Beyond Final Answers: CRYSTAL Benchmark for
+               Transparent Multimodal Reasoning Evaluation},
+  author    = {Barrios, Wayner and Jin, SouYoung},
+  booktitle = {Proceedings of the European Conference on
+               Computer Vision (ECCV)},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+</main>
+
+<!-- ░░░ FOOTER ░░░ -->
+<footer class="footer">
+  <nav class="footer__links" aria-label="Footer">
+    <a href="https://arxiv.org/abs/2603.13099" target="_blank" rel="noopener">arXiv</a>
+    <a href="https://github.com/waybarrios/crystal" target="_blank" rel="noopener">Code</a>
+    <a href="https://huggingface.co/datasets/waybarrios/CRYSTAL" target="_blank" rel="noopener">Dataset</a>
+    <a href="#cite">BibTeX</a>
+  </nav>
+  <p class="footer__fine">
+    Dartmouth College · ECCV 2026. Website template adapted from
+    <a href="https://waybarrios.com/MoDA/" target="_blank" rel="noopener">MoDA</a>, inspired by
+    <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>.
+  </p>
+</footer>
+
+<script src="static/js/main.js" defer></script>
+</body>
+</html>

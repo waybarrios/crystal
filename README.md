@@ -249,6 +249,18 @@ Same two-phase protocol, no architecture-specific tuning. Recall nearly **triple
 
 > CPR-Curriculum generalizes across architectures: **+93% Match F1** on InternVL3.5-4B without any model-specific tuning.
 
+### Train it yourself
+
+The training code lives in [`training/`](training/) — model-agnostic launch scripts for **CPR**, **CPR-Curriculum** (two-phase), and the answer-only baseline, with presets for **Qwen2.5-VL** and **InternVL**:
+
+```bash
+# CPR-Curriculum — Phase 1 (answer-only), then Phase 2 (add CPR from the best checkpoint)
+bash training/scripts/train_answer_only.sh
+MODEL=./output/phase1/checkpoint-XXX LEARNING_RATE=5e-6 bash training/scripts/train_cpr.sh
+```
+
+Full step-by-step guide (CPR, CPR-Curriculum, SPR, hyperparameters, evaluating checkpoints): [`training/README.md`](training/README.md).
+
 ## Ablation Studies
 
 ### Encoder and Threshold Selection

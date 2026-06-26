@@ -55,7 +55,11 @@ So a correct answer with faithful reasoning scores highest; a correct answer wit
 unrelated reasoning is penalized (the "right answer, wrong reasons" case), and a
 wrong answer gets at most partial credit for on-track steps.
 
-## Semantic Process Reward (SPR)
+## Semantic Process Reward (SPR) — experimental
+
+> SPR is an **experimental** reasoning reward, not the method reported in the
+> paper (the CRYSTAL results use CPR / CPR-Curriculum). It is provided for
+> reference and ablation.
 
 ```python
 from crystal_metrics import semantic_reasoning_reward

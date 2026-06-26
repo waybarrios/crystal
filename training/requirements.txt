@@ -1,0 +1,17 @@
+# CRYSTAL GRPO/CPR training stack.
+# These are the versions the base open-r1-multimodal trainer was run with.
+# Install into a DEDICATED environment — these pins differ from the lightweight
+# crystal-metrics install and from the inference environment.
+
+torch>=2.5.1
+transformers==4.49.0
+trl==0.17.0
+deepspeed==0.15.4
+accelerate>=1.2.1
+datasets>=3.2.0
+vllm==0.6.6.post1          # accelerated generation during GRPO rollouts
+sentence-transformers       # required for the Semantic Process Reward (SPR)
+# flash-attn>=2.5.0         # optional, ~30-50% faster training (build separately)
+
+# CRYSTAL reward logic (CPR / SPR / format / accuracy) used by rewards_grpo.py
+crystal-metrics

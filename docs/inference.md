@@ -43,11 +43,13 @@ That is the only difference between backends: the server you start, the
 |------|---------|---------|
 | `--model` | (required) | Model name served by the endpoint |
 | `--base-url` | `http://localhost:11434/v1` | OpenAI-compatible endpoint (Ollama / vLLM) |
+| `--api-key` | `EMPTY` | API key (unused by Ollama/vLLM, but the client requires a value) |
 | `--dataset` | `waybarrios/CRYSTAL` | HF hub name or a local `load_from_disk` path |
 | `--split` | `test` | Dataset split |
 | `--output-dir` | `predictions` | Where per-sample JSON is written |
 | `--max-tokens` | `4096` | Generation cap |
 | `--temperature` | `0.1` | Sampling temperature (low = near-deterministic) |
+| `--max-side` | `1024` | Resize cap (px) for the retry image when the server rejects a large one |
 | `--start` / `--limit` | `0` / all | Run a slice (e.g. smoke-test with `--limit 5`) |
 
 The CRYSTAL dataset is gated — `huggingface-cli login` and request access first,

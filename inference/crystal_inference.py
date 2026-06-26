@@ -273,7 +273,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--output-dir", default="predictions", help="Where to write per-sample JSON.")
     p.add_argument("--max-tokens", type=int, default=4096)
     p.add_argument("--temperature", type=float, default=0.1)
-    p.add_argument("--max-side", type=int, default=768, help="Resize cap for the retry image.")
+    p.add_argument("--max-side", type=int, default=1024, help="Resize cap for the retry image.")
     p.add_argument("--start", type=int, default=0, help="Start index.")
     p.add_argument("--limit", type=int, default=None, help="Max samples to run (default: all).")
     return p

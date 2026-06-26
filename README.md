@@ -6,6 +6,7 @@
 
 ### Transparent Multimodal Reasoning Evaluation
 
+[![Website](https://img.shields.io/badge/Project-Website-blue.svg)](https://waybarrios.github.io/crystal/)
 [![Paper](https://img.shields.io/badge/arXiv-2603.13099-b31b1b.svg)](https://arxiv.org/abs/2603.13099)
 [![Dataset](https://img.shields.io/badge/Benchmark-6%2C372_instances-green.svg)](#crystal-benchmark)
 [![Models](https://img.shields.io/badge/Evaluated-20_MLLMs-orange.svg)](#key-findings)
@@ -17,7 +18,7 @@
 
 *Dartmouth College*
 
-[Paper](https://arxiv.org/abs/2603.13099) &nbsp;|&nbsp; [Dataset](https://huggingface.co/datasets/waybarrios/CRYSTAL) &nbsp;|&nbsp; [Results](#key-findings) &nbsp;|&nbsp; [Training](#training-with-causal-process-reward)
+[Website](https://waybarrios.github.io/crystal/) &nbsp;|&nbsp; [Paper](https://arxiv.org/abs/2603.13099) &nbsp;|&nbsp; [Dataset](https://huggingface.co/datasets/waybarrios/CRYSTAL) &nbsp;|&nbsp; [Results](#key-findings) &nbsp;|&nbsp; [Training](#training-with-causal-process-reward)
 
 ---
 

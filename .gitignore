@@ -4,3 +4,12 @@ node_modules/
 .vscode/
 .idea/
 .claude/
+
+# Python packaging
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.eggs/

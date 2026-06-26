@@ -10,6 +10,7 @@
 [![Dataset](https://img.shields.io/badge/Benchmark-6%2C372_instances-green.svg)](#crystal-benchmark)
 [![Models](https://img.shields.io/badge/Evaluated-20_MLLMs-orange.svg)](#key-findings)
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97_Dataset-CRYSTAL-yellow.svg)](https://huggingface.co/datasets/waybarrios/CRYSTAL)
+[![PyPI](https://img.shields.io/pypi/v/crystal-metrics.svg)](https://pypi.org/project/crystal-metrics/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 
 **[Wayner Barrios](https://github.com/waybarrios)** &nbsp;&middot;&nbsp; **[SouYoung Jin](https://souyoungjin.github.io/)**
@@ -67,6 +68,31 @@ Instead of just asking *"is the answer correct?"*, CRYSTAL asks:
 |:--|:--|
 | **Match F1** | Step-level precision & recall via semantic similarity matching |
 | **Ordered Match F1** | Penalizes disordered reasoning chains (via LIS ratio) |
+
+## Metrics Package (`crystal-metrics`)
+
+The CRYSTAL metrics ship as a pip-installable package ([on PyPI](https://pypi.org/project/crystal-metrics/)) so anyone can score their own models.
+
+```bash
+pip install crystal-metrics          # Match F1, Ordered Match F1, Precision, Recall, Accuracy
+pip install crystal-metrics[judge]   # + optional LLM judge for free-form answers
+```
+
+```python
+from crystal_metrics import MLLMReasoningEvaluator
+
+evaluator = MLLMReasoningEvaluator()  # all-distilroberta-v1, τ=0.35 (paper defaults)
+m = evaluator.evaluate_single(predicted_steps, reference_steps, alpha=0.3)
+print(m.match_f1, m.precision, m.recall, m.ordered_match_f1)
+```
+
+Or from the command line:
+
+```bash
+crystal-metrics evaluate predictions.json references.json --alpha 0.3
+```
+
+**Docs:** [installation](docs/installation.md) &middot; [quickstart](docs/quickstart.md) &middot; [metric definitions](docs/metrics.md) &middot; [CLI](docs/cli.md). Package source lives in [`src/crystal_metrics/`](src/crystal_metrics/).
 
 ## Examples
 

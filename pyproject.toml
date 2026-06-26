@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crystal-metrics"
+version = "0.1.1"
+description = "Transparent multimodal reasoning metrics from the CRYSTAL benchmark (Match F1, Ordered Match F1, accuracy)."
+readme = "src/crystal_metrics/README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Wayner Barrios" },
+    { name = "SouYoung Jin" },
+]
+keywords = ["mllm", "vlm", "reasoning", "evaluation", "match-f1", "crystal", "benchmark"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "torch",
+    "sentence-transformers",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+judge = ["openai>=1.0"]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/waybarrios/crystal"
+Paper = "https://arxiv.org/abs/2603.13099"
+Dataset = "https://huggingface.co/datasets/waybarrios/CRYSTAL"
+
+[project.scripts]
+crystal-metrics = "crystal_metrics.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+crystal_metrics = ["README.md"]

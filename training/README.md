@@ -8,39 +8,43 @@ The reward logic itself (CPR, SPR, format, accuracy) lives in the pip package
 [`crystal_metrics.rewards`](../docs/rewards.md); [`rewards_grpo.py`](rewards_grpo.py)
 is the **model-agnostic adapter** that plugs those rewards into the trainer.
 
-> **Scope.** The base GRPO trainer (`grpo_rec.py`, `VLMGRPOTrainer`) comes from
-> [open-r1-multimodal](https://github.com/om-ai-lab/VLM-R1). This directory ships
-> the CRYSTAL-specific pieces on top of it. See [Setup](#setup).
+> **Self-contained.** The GRPO trainer (`open_r1/`) is **bundled** here — vendored
+> from [open-r1-multimodal](https://github.com/om-ai-lab/VLM-R1) (Apache-2.0, see
+> `open_r1/LICENSE` and `open_r1/NOTICE`) with the CRYSTAL CPR/SPR modifications.
+> Its reward logic is rewired to import from the `crystal-metrics` package, so
+> there is a single source of truth for the reward functions. No external clone
+> needed.
 
 ## Contents
 
 ```
 training/
-├── rewards_grpo.py        # model-agnostic GRPO reward adapter -> crystal_metrics.rewards
+├── open_r1/               # BUNDLED GRPO trainer (grpo_rec.py, trainer/, vlm_modules/, monkey patches)
+│   ├── vlm_modules/        #   Qwen2.5-VL, InternVL, GLM-4V model adapters (rewards -> crystal_metrics)
+│   ├── trainer/            #   VLMGRPOTrainer + GRPOConfig
+│   ├── utils/              #   PCGrad, callbacks, pycocotools, ...
+│   └── LICENSE, NOTICE     #   Apache-2.0 + attribution
+├── rewards_grpo.py        # model-agnostic reward adapter (for custom trainers)
 ├── requirements.txt       # pinned training stack (trl, deepspeed, vllm, ...)
 ├── configs/               # DeepSpeed ZeRO-3 configs (Qwen + InternVL)
 ├── scripts/               # launch scripts (CPR, curriculum, SPR, answer-only)
-├── vlm_modules/           # model adapters: Qwen2.5-VL, InternVL, GLM-4V
 └── docs/                  # VQA training guide, multi-model setup, GRPO tips
 ```
 
 ## Setup
 
 ```bash
-# 1. Dedicated environment with the pinned training stack.
+# Dedicated environment with the pinned training stack (includes crystal-metrics).
 python -m venv .venv-train && source .venv-train/bin/activate
 pip install -r training/requirements.txt
 
-# 2. Get the base GRPO trainer.
-git clone https://github.com/om-ai-lab/VLM-R1
-export OPENR1_SRC="$PWD/VLM-R1/src/open-r1-multimodal/src"
-
-# 3. (Optional) flash-attn for ~30-50% faster training.
+# (Optional) flash-attn for ~30-50% faster training.
 pip install flash-attn>=2.5.0
 ```
 
-All scripts read `OPENR1_SRC` and put `training/` on `PYTHONPATH` so the trainer
-imports `rewards_grpo` and `crystal_metrics`.
+That's it — the launch scripts point `OPENR1_SRC` at the bundled `open_r1/` by
+default and put it on `PYTHONPATH`. Override `OPENR1_SRC` only to use a different
+trainer checkout.
 
 The dataset defaults to the gated HF benchmark (`waybarrios/CRYSTAL`); log in with
 `huggingface-cli login` and request access, or pass a local path via `DATASET`.
@@ -173,9 +177,9 @@ More tuning guidance is in [`docs/GRPO_TRAINING_RECOMMENDATIONS.md`](docs/GRPO_T
 
 ## Models
 
-- **Qwen2.5-VL** — `vlm_modules/qwen_module.py`. Image budget via `--max_pixels`/`--min_pixels`.
-- **InternVL** — `vlm_modules/internvl_module.py`. Image patches via `--max_anyres_num`.
-- **GLM-4V** — `vlm_modules/glm_module.py`.
+- **Qwen2.5-VL** — `open_r1/vlm_modules/qwen_module.py`. Image budget via `--max_pixels`/`--min_pixels`.
+- **InternVL** — `open_r1/vlm_modules/internvl_module.py`. Image patches via `--max_anyres_num`.
+- **GLM-4V** — `open_r1/vlm_modules/glm_module.py`.
 
 Multi-model setup and transformers-version notes: [`docs/MULTI_MODEL_SETUP.md`](docs/MULTI_MODEL_SETUP.md).
 Full VQA training reference: [`docs/VQA_TRAINING.md`](docs/VQA_TRAINING.md).

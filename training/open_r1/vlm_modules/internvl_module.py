@@ -8,7 +8,7 @@ from torchvision.transforms.functional import InterpolationMode
 from transformers.feature_extraction_sequence_utils import BatchFeature
 
 # Import from mllm_evaluator (added to PYTHONPATH by training script)
-from accuracy_calculator import AccuracyCalculator
+from crystal_metrics.accuracy import AccuracyCalculator
 
 IMG_START_TOKEN='<img>'
 IMG_END_TOKEN='</img>'
@@ -424,7 +424,7 @@ class InvernVLModule(VLMBaseModule):
                     rewards.append(reward)
                     continue
 
-                from simple_similarity import best_match_f1
+                from crystal_metrics.similarity import best_match_f1
                 try:
                     f1, matched_pred, matched_ref = best_match_f1(predicted_steps, ref_steps_cleaned, threshold=0.45)
                     reward = f1
@@ -459,11 +459,11 @@ class InvernVLModule(VLMBaseModule):
         from datetime import datetime
 
         try:
-            from causal_reward import causal_intervention_reward
+            from crystal_metrics.rewards import causal_process_reward as causal_intervention_reward
         except ImportError:
             import sys
             sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'mllm_evaluator'))
-            from causal_reward import causal_intervention_reward
+            from crystal_metrics.rewards import causal_process_reward as causal_intervention_reward
 
         try:
             completion_contents = [completion[0]["content"] for completion in completions]

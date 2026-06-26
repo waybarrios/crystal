@@ -1,0 +1,11 @@
+This directory (open_r1/) is vendored from the open-r1-multimodal training stack
+(VLM-R1, https://github.com/om-ai-lab/VLM-R1), which builds on Hugging Face's
+open-r1 (https://github.com/huggingface/open-r1). Licensed under Apache-2.0
+(see LICENSE in this directory).
+
+CRYSTAL modifications:
+- Causal Process Reward (CPR) and Semantic Process Reward (SPR) integration in
+  vlm_modules/qwen_module.py and vlm_modules/internvl_module.py.
+- Reward logic rewired to import from the `crystal-metrics` package
+  (crystal_metrics.accuracy / .similarity / .reasoning / .rewards) instead of the
+  original local mllm_evaluator modules.

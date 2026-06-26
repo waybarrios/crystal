@@ -8,8 +8,10 @@
 set -e
 
 # --- paths (override via env) ---------------------------------------------
-OPENR1_SRC="${OPENR1_SRC:?Set OPENR1_SRC to <open-r1-multimodal>/src}"
 TRAINING_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# The GRPO trainer (open_r1/) is bundled in this directory. Override OPENR1_SRC
+# only if you want to point at a different checkout.
+OPENR1_SRC="${OPENR1_SRC:-$TRAINING_DIR}"
 DEEPSPEED_CONFIG="${DEEPSPEED_CONFIG:-${TRAINING_DIR}/configs/zero3.json}"
 
 # crystal_metrics rewards + the model-agnostic adapter must be importable.

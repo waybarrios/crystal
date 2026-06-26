@@ -5,8 +5,8 @@
 # starting model for train_cpr*.sh. Works for any VLM (set MODEL).
 set -e
 
-OPENR1_SRC="${OPENR1_SRC:?Set OPENR1_SRC to <open-r1-multimodal>/src}"
 TRAINING_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+OPENR1_SRC="${OPENR1_SRC:-$TRAINING_DIR}"   # bundled open_r1 trainer
 DEEPSPEED_CONFIG="${DEEPSPEED_CONFIG:-${TRAINING_DIR}/configs/zero3.json}"
 
 export PYTHONPATH="${OPENR1_SRC}:${TRAINING_DIR}:${PYTHONPATH}"

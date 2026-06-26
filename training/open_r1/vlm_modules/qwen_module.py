@@ -9,8 +9,8 @@ import sys
 import os
 
 # Import from mllm_evaluator (added to PYTHONPATH by training script)
-from accuracy_calculator import AccuracyCalculator
-from mllm_evaluator import MLLMReasoningEvaluator
+from crystal_metrics.accuracy import AccuracyCalculator
+from crystal_metrics.reasoning import MLLMReasoningEvaluator
 
 class Qwen2VLModule(VLMBaseModule):
     # Class variables for LLM judge configuration
@@ -658,7 +658,7 @@ class Qwen2VLModule(VLMBaseModule):
                 # Neural semantic similarity (mllm_evaluator) is not compatible with
                 # DeepSpeed's multi-process forking, causing 'weight' must be 2-D errors
                 # For inference evaluation, use evaluate_predictions.py which uses mllm_evaluator
-                from simple_similarity import best_match_f1
+                from crystal_metrics.similarity import best_match_f1
                 try:
                     f1, matched_pred, matched_ref = best_match_f1(predicted_steps, ref_steps_cleaned, threshold=0.45)
                     reward = f1
@@ -736,7 +736,7 @@ class Qwen2VLModule(VLMBaseModule):
 
                 if ref_steps_cleaned:
                     try:
-                        from simple_similarity import semantic_match_f1
+                        from crystal_metrics.similarity import semantic_match_f1
                         # semantic_match_f1 handles model internally with process-local caching
                         f1, matched_pred, matched_ref = semantic_match_f1(
                             predicted_steps, ref_steps_cleaned,
@@ -749,7 +749,7 @@ class Qwen2VLModule(VLMBaseModule):
                         metrics_info = f"Semantic F1={f1:.3f}, P={precision:.3f}, R={recall:.3f}"
                     except Exception as e:
                         # Fallback to word overlap if semantic fails
-                        from simple_similarity import best_match_f1
+                        from crystal_metrics.similarity import best_match_f1
                         f1, _, _ = best_match_f1(predicted_steps, ref_steps_cleaned, threshold=0.45)
                         reward = f1
                         metrics_info = f"Fallback: {str(e)[:30]}"
@@ -792,11 +792,11 @@ class Qwen2VLModule(VLMBaseModule):
         from datetime import datetime
 
         try:
-            from causal_reward import causal_intervention_reward
+            from crystal_metrics.rewards import causal_process_reward as causal_intervention_reward
         except ImportError:
             import sys
             sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'mllm_evaluator'))
-            from causal_reward import causal_intervention_reward
+            from crystal_metrics.rewards import causal_process_reward as causal_intervention_reward
 
         try:
             completion_contents = [completion[0]["content"] for completion in completions]

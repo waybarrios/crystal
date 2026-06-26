@@ -1,0 +1,4 @@
+openai>=1.0
+pillow
+datasets>=3.0
+tqdm

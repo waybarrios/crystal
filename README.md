@@ -101,6 +101,22 @@ rewards = causal_process_reward(completions, ground_truths=gts, reference_steps=
 
 **Docs:** [installation](docs/installation.md) &middot; [quickstart](docs/quickstart.md) &middot; [metric definitions](docs/metrics.md) &middot; [CLI](docs/cli.md) &middot; [RL rewards](docs/rewards.md). Package source lives in [`src/crystal_metrics/`](src/crystal_metrics/).
 
+## Running Inference
+
+A single **model-agnostic** script ([`inference/crystal_inference.py`](inference/crystal_inference.py)) runs any vision-language model over CRYSTAL via an OpenAI-compatible endpoint — the same code for **Ollama** and **vLLM**, only `--base-url` and `--model` change:
+
+```bash
+# Ollama
+ollama serve & ; ollama pull qwen2.5vl:7b
+python inference/crystal_inference.py --model qwen2.5vl:7b --base-url http://localhost:11434/v1
+
+# vLLM
+vllm serve Qwen/Qwen2.5-VL-7B-Instruct --port 8000 &
+python inference/crystal_inference.py --model Qwen/Qwen2.5-VL-7B-Instruct --base-url http://localhost:8000/v1
+```
+
+It writes per-sample `{reasoning_steps, answer}` JSON (resumable) ready for `crystal-metrics evaluate`. See [inference docs](docs/inference.md).
+
 ## Examples
 
 CRYSTAL spans diverse reasoning scenarios &mdash; from spatial understanding to scientific reasoning and mathematical problem-solving:

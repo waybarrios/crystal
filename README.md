@@ -92,7 +92,14 @@ Or from the command line:
 crystal-metrics evaluate predictions.json references.json --alpha 0.3
 ```
 
-**Docs:** [installation](docs/installation.md) &middot; [quickstart](docs/quickstart.md) &middot; [metric definitions](docs/metrics.md) &middot; [CLI](docs/cli.md). Package source lives in [`src/crystal_metrics/`](src/crystal_metrics/).
+It also ships the **RL reward functions** (Causal & Semantic Process Reward) used to train models on CRYSTAL:
+
+```python
+from crystal_metrics import causal_process_reward
+rewards = causal_process_reward(completions, ground_truths=gts, reference_steps=refs)
+```
+
+**Docs:** [installation](docs/installation.md) &middot; [quickstart](docs/quickstart.md) &middot; [metric definitions](docs/metrics.md) &middot; [CLI](docs/cli.md) &middot; [RL rewards](docs/rewards.md). Package source lives in [`src/crystal_metrics/`](src/crystal_metrics/).
 
 ## Examples
 

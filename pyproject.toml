@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crystal-metrics"
-version = "0.1.1"
+version = "0.2.0"
 description = "Transparent multimodal reasoning metrics from the CRYSTAL benchmark (Match F1, Ordered Match F1, accuracy)."
 readme = "src/crystal_metrics/README.md"
 requires-python = ">=3.8"

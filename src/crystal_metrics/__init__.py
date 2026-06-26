@@ -18,6 +18,15 @@ from .reasoning import (
     load_json_data,
     save_results,
 )
+from .rewards import (
+    accuracy_reward,
+    causal_process_reward,
+    format_reward,
+    parse_reasoning_steps,
+    select_reward_func,
+    semantic_reasoning_reward,
+    word_overlap_reasoning_reward,
+)
 from .similarity import (
     best_match_f1,
     jaccard_similarity,
@@ -25,7 +34,7 @@ from .similarity import (
     word_overlap_similarity,
 )
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = [
     "MLLMReasoningEvaluator",
@@ -39,5 +48,12 @@ __all__ = [
     "word_overlap_similarity",
     "load_json_data",
     "save_results",
+    "format_reward",
+    "accuracy_reward",
+    "word_overlap_reasoning_reward",
+    "semantic_reasoning_reward",
+    "causal_process_reward",
+    "parse_reasoning_steps",
+    "select_reward_func",
     "__version__",
 ]

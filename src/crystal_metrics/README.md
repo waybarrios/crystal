@@ -22,6 +22,11 @@ step-level precision/recall, ordering, and answer accuracy.
 | **Ordered Match F1** | Match F1 penalized for out-of-order reasoning (Kendall's τ or LIS ratio) |
 | **Accuracy** | Multi-format final-answer correctness (yes/no, numeric, multiple choice, free text) |
 
+It also ships the **RL reward functions** used to train models on CRYSTAL —
+Causal Process Reward (CPR) and Semantic Process Reward (SPR) — in
+`crystal_metrics.rewards` (pure Python, model-agnostic). See the
+[rewards docs](https://github.com/waybarrios/crystal/blob/main/docs/rewards.md).
+
 ## Install
 
 ```bash
@@ -118,6 +123,7 @@ crystal-metrics evaluate predictions.json references.json --alpha 0.3
 - [Quickstart](https://github.com/waybarrios/crystal/blob/main/docs/quickstart.md)
 - [Metric definitions](https://github.com/waybarrios/crystal/blob/main/docs/metrics.md)
 - [CLI reference](https://github.com/waybarrios/crystal/blob/main/docs/cli.md)
+- [RL reward functions (CPR / SPR)](https://github.com/waybarrios/crystal/blob/main/docs/rewards.md)
 
 Benchmark: 🤗 [waybarrios/CRYSTAL](https://huggingface.co/datasets/waybarrios/CRYSTAL) · Project: [github.com/waybarrios/crystal](https://github.com/waybarrios/crystal)
 
